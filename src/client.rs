@@ -6,98 +6,98 @@ use crate::fish;
 
 #[derive(Debug, Clone)]
 pub struct Acnh {
-	client: Client,
-	pub prefix: String,
+  client: Client,
+  pub prefix: String,
 }
 
 impl Acnh {
-	pub fn new() -> Self {
-		Acnh {
-			client: Client::new(),
-			prefix: String::from("http://acnhapi.com/v1/"),
-		}
+  pub fn new() -> Self {
+	Acnh {
+	  client: Client::new(),
+	  prefix: String::from("http://acnhapi.com/v1/"),
 	}
+  }
 
-	pub async fn fishes(&self) -> Result<HashMap<String, fish::Fish>, Box<dyn error::Error>> {
-		let response = self.get("fish").await?;
+  pub async fn fishes(&self) -> Result<HashMap<String, fish::Fish>, Box<dyn error::Error>> {
+	let response = self.get("fish").await?;
 
-		match response.json::<HashMap<String, fish::Fish>>().await {
-			Ok(result) => Ok(result),
-			Err(e) => {
-				Err(Box::new(e))
-			}
-		}
+	match response.json::<HashMap<String, fish::Fish>>().await {
+	  Ok(result) => Ok(result),
+	  Err(e) => {
+		Err(Box::new(e))
+	  }
 	}
+  }
 
-	pub async fn fish(&self, id: &str) -> Result<fish::Fish, Box<dyn error::Error>> {
-		let url = ["fish/", id].concat();
+  pub async fn fish(&self, id: &str) -> Result<fish::Fish, Box<dyn error::Error>> {
+	let url = ["fish/", id].concat();
 
-		let response = self.get(&url).await?;
+	let response = self.get(&url).await?;
 
-		match response.json::<fish::Fish>().await {
-			Ok(result) => Ok(result),
-			Err(e) => {
-				Err(Box::new(e))
-			}
-		}
+	match response.json::<fish::Fish>().await {
+	  Ok(result) => Ok(result),
+	  Err(e) => {
+		Err(Box::new(e))
+	  }
 	}
+  }
 
-	async fn get(&self, url: &str) -> Result<Response, Box<dyn error::Error>> {
-		let prefix = self.prefix.to_string();
-		let url = [prefix, url.to_string()].concat();
+  async fn get(&self, url: &str) -> Result<Response, Box<dyn error::Error>> {
+	let prefix = self.prefix.to_string();
+	let url = [prefix, url.to_string()].concat();
 
-		let builder = self
-			.client
-			.request(Method::GET, &url);
+	let builder = self
+	  .client
+	  .request(Method::GET, &url);
 
-		let response = match builder.send().await {
-			Ok(res) => Ok(res),
-			Err(e) => Err(e)
-		};
+	let response = match builder.send().await {
+	  Ok(res) => Ok(res),
+	  Err(e) => Err(e)
+	};
 
-		match response?.error_for_status() {
-			Ok(res) => {
-				Ok(res)
-			}
-			Err(e) => {
-				Err(Box::new(e))
-			}
-		}
+	match response?.error_for_status() {
+	  Ok(res) => {
+		Ok(res)
+	  }
+	  Err(e) => {
+		Err(Box::new(e))
+	  }
 	}
+  }
 }
 
 #[cfg(test)]
 mod tests {
-	use super::*;
+  use super::*;
 
-	#[test]
-	fn it_works() {
-		assert_eq!(2 + 2, 4);
+  #[test]
+  fn it_works() {
+	assert_eq!(2 + 2, 4);
+  }
+
+  #[test]
+  fn test_get_all_fish() {
+	#[tokio::main]
+	async fn do_request() {
+	  let acnh = Acnh::new();
+	  let _result = acnh.fishes().await.unwrap();
+
+	  assert!(true);
 	}
 
-	#[test]
-	fn test_get_all_fish() {
-		#[tokio::main]
-		async fn do_request() {
-			let acnh = Acnh::new();
-			let _result = acnh.fishes().await.unwrap();
+	do_request()
+  }
 
-			assert!(true);
-		}
+  #[test]
+  fn test_get_fish() {
+	#[tokio::main]
+	async fn do_request() {
+	  let acnh = Acnh::new();
+	  let result = acnh.fish("1").await.unwrap();
 
-		do_request()
+	  assert_eq!(result.id, 1);
 	}
 
-	#[test]
-	fn test_get_fish() {
-		#[tokio::main]
-		async fn do_request() {
-			let acnh = Acnh::new();
-			let result = acnh.fish("1").await.unwrap();
-
-			assert_eq!(result.id, 1);
-		}
-
-		do_request()
-	}
+	do_request()
+  }
 }

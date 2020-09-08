@@ -6,7 +6,7 @@ edition = "2018"
 description = "Wrapper for acnhapi"
 repository = "https://github.com/aldidana/acnh/"
 license = "MIT"
-keywords = ["acnh", "animal-crossing", "animal-crossing-new-horizons"]
+keywords = ["acnh", "animal-crossing", "new-horizons"]
 readme = "README.md"
 
 

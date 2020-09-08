@@ -1,0 +1,18 @@
+[package]
+name = "acnh"
+version = "0.1.0"
+authors = ["Aldi Perdana <aldidana@gmail.com>"]
+edition = "2018"
+description = "ACNH is a wrapper for the http://acnhapi.com/"
+repository = "https://github.com/aldidana/acnh/"
+license = "MIT"
+keywords = ["acnh", "animal-crossing", "animal-crossing-new-horizons"]
+readme = "README.md"
+
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+reqwest = { version = "0.10.8", features = ["json"] }
+tokio = { version = "0.2.22", features = ["full"] }
+serde = { version = "1.0.114", features = [ 'derive' ] }

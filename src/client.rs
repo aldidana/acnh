@@ -50,12 +50,7 @@ impl Acnh {
 	  .client
 	  .request(Method::GET, &url);
 
-	let response = match builder.send().await {
-	  Ok(res) => Ok(res),
-	  Err(e) => Err(e)
-	};
-
-	match response?.error_for_status() {
+	match builder.send().await?.error_for_status() {
 	  Ok(res) => {
 		Ok(res)
 	  }
@@ -69,11 +64,6 @@ impl Acnh {
 #[cfg(test)]
 mod tests {
   use super::*;
-
-  #[test]
-  fn it_works() {
-	assert_eq!(2 + 2, 4);
-  }
 
   #[test]
   fn test_get_all_fish() {

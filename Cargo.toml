@@ -1,6 +1,6 @@
 [package]
 name = "acnh"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["Aldi Perdana <aldidana@gmail.com>"]
 edition = "2018"
 description = "Wrapper for acnhapi"

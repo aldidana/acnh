@@ -4,6 +4,7 @@ use std::{error};
 use super::fish;
 use super::sea_creature;
 use super::bug;
+use super::fossil;
 
 #[derive(Debug, Clone)]
 pub struct Acnh {
@@ -84,6 +85,30 @@ impl Acnh {
 	let response = self.get(&url).await?;
 
 	match response.json::<bug::Bug>().await {
+	  Ok(result) => Ok(result),
+	  Err(e) => {
+		Err(Box::new(e))
+	  }
+	}
+  }
+
+  pub async fn fossils(&self) -> Result<Vec<fossil::Fossil>, Box<dyn error::Error>> {
+	let response = self.get("fossils").await?;
+
+	match response.json::<Vec<fossil::Fossil>>().await {
+	  Ok(result) => Ok(result),
+	  Err(e) => {
+		Err(Box::new(e))
+	  }
+	}
+  }
+
+  pub async fn fossil_by_name(&self, name: &str) -> Result<fossil::Fossil, Box<dyn error::Error>> {
+	let url = ["fossils/", name].concat();
+
+	let response = self.get(&url).await?;
+
+	match response.json::<fossil::Fossil>().await {
 	  Ok(result) => Ok(result),
 	  Err(e) => {
 		Err(Box::new(e))
@@ -187,6 +212,32 @@ mod tests {
 	  let result = acnh.bug_by_id("1").await.unwrap();
 
 	  assert_eq!(result.id, 1);
+	}
+
+	do_request()
+  }
+
+  #[test]
+  fn test_get_fossils() {
+	#[tokio::main]
+	async fn do_request() {
+	  let acnh = Acnh::new();
+	  let _result = acnh.fossils().await.unwrap();
+
+	  assert!(true);
+	}
+
+	do_request()
+  }
+
+  #[test]
+  fn test_get_fossil() {
+	#[tokio::main]
+	async fn do_request() {
+	  let acnh = Acnh::new();
+	  let result = acnh.fossil_by_name("amber").await.unwrap();
+
+	  assert_eq!(result.file_name, "amber");
 	}
 
 	do_request()

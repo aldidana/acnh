@@ -3,6 +3,7 @@ use std::{error};
 
 use super::fish;
 use super::sea_creature;
+use super::bug;
 
 #[derive(Debug, Clone)]
 pub struct Acnh {
@@ -59,6 +60,30 @@ impl Acnh {
 	let response = self.get(&url).await?;
 
 	match response.json::<sea_creature::SeaCreature>().await {
+	  Ok(result) => Ok(result),
+	  Err(e) => {
+		Err(Box::new(e))
+	  }
+	}
+  }
+
+  pub async fn bugs(&self) -> Result<Vec<bug::Bug>, Box<dyn error::Error>> {
+	let response = self.get("bugs").await?;
+
+	match response.json::<Vec<bug::Bug>>().await {
+	  Ok(result) => Ok(result),
+	  Err(e) => {
+		Err(Box::new(e))
+	  }
+	}
+  }
+
+  pub async fn bug_by_id(&self, id: &str) -> Result<bug::Bug, Box<dyn error::Error>> {
+	let url = ["bugs/", id].concat();
+
+	let response = self.get(&url).await?;
+
+	match response.json::<bug::Bug>().await {
 	  Ok(result) => Ok(result),
 	  Err(e) => {
 		Err(Box::new(e))
@@ -134,6 +159,32 @@ mod tests {
 	async fn do_request() {
 	  let acnh = Acnh::new();
 	  let result = acnh.sea_creature_by_id("1").await.unwrap();
+
+	  assert_eq!(result.id, 1);
+	}
+
+	do_request()
+  }
+
+  #[test]
+  fn test_get_bugs() {
+	#[tokio::main]
+	async fn do_request() {
+	  let acnh = Acnh::new();
+	  let _result = acnh.bugs().await.unwrap();
+
+	  assert!(true);
+	}
+
+	do_request()
+  }
+
+  #[test]
+  fn test_get_bug() {
+	#[tokio::main]
+	async fn do_request() {
+	  let acnh = Acnh::new();
+	  let result = acnh.bug_by_id("1").await.unwrap();
 
 	  assert_eq!(result.id, 1);
 	}

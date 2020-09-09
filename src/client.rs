@@ -1,8 +1,8 @@
 use reqwest::{Client, Method, Response};
-use std::collections::HashMap;
 use std::{error};
 
-use crate::fish;
+use super::fish;
+use super::sea_creature;
 
 #[derive(Debug, Clone)]
 pub struct Acnh {
@@ -14,11 +14,11 @@ impl Acnh {
   pub fn new() -> Self {
 	Acnh {
 	  client: Client::new(),
-	  prefix: String::from("http://acnhapi.com/v1a/"),
+	  prefix: String::from("https://acnhapi.com/v1a/"),
 	}
   }
 
-  pub async fn fishes(&self) -> Result<Vec<fish::Fish>, Box<dyn error::Error>> {
+  pub async fn fish(&self) -> Result<Vec<fish::Fish>, Box<dyn error::Error>> {
 	let response = self.get("fish").await?;
 
 	match response.json::<Vec<fish::Fish>>().await {
@@ -29,12 +29,36 @@ impl Acnh {
 	}
   }
 
-  pub async fn fish(&self, id: &str) -> Result<fish::Fish, Box<dyn error::Error>> {
+  pub async fn fish_by_id(&self, id: &str) -> Result<fish::Fish, Box<dyn error::Error>> {
 	let url = ["fish/", id].concat();
 
 	let response = self.get(&url).await?;
 
 	match response.json::<fish::Fish>().await {
+	  Ok(result) => Ok(result),
+	  Err(e) => {
+		Err(Box::new(e))
+	  }
+	}
+  }
+
+  pub async fn sea_creatures(&self) -> Result<Vec<sea_creature::SeaCreature>, Box<dyn error::Error>> {
+	let response = self.get("sea").await?;
+
+	match response.json::<Vec<sea_creature::SeaCreature>>().await {
+	  Ok(result) => Ok(result),
+	  Err(e) => {
+		Err(Box::new(e))
+	  }
+	}
+  }
+
+  pub async fn sea_creature_by_id(&self, id: &str) -> Result<sea_creature::SeaCreature, Box<dyn error::Error>> {
+	let url = ["sea/", id].concat();
+
+	let response = self.get(&url).await?;
+
+	match response.json::<sea_creature::SeaCreature>().await {
 	  Ok(result) => Ok(result),
 	  Err(e) => {
 		Err(Box::new(e))
@@ -70,7 +94,7 @@ mod tests {
 	#[tokio::main]
 	async fn do_request() {
 	  let acnh = Acnh::new();
-	  let _result = acnh.fishes().await.unwrap();
+	  let _result = acnh.fish().await.unwrap();
 
 	  assert!(true);
 	}
@@ -83,7 +107,33 @@ mod tests {
 	#[tokio::main]
 	async fn do_request() {
 	  let acnh = Acnh::new();
-	  let result = acnh.fish("1").await.unwrap();
+	  let result = acnh.fish_by_id("1").await.unwrap();
+
+	  assert_eq!(result.id, 1);
+	}
+
+	do_request()
+  }
+
+  #[test]
+  fn test_get_sea_creatures() {
+	#[tokio::main]
+	async fn do_request() {
+	  let acnh = Acnh::new();
+	  let _result = acnh.sea_creatures().await.unwrap();
+
+	  assert!(true);
+	}
+
+	do_request()
+  }
+
+  #[test]
+  fn test_get_sea_creature() {
+	#[tokio::main]
+	async fn do_request() {
+	  let acnh = Acnh::new();
+	  let result = acnh.sea_creature_by_id("1").await.unwrap();
 
 	  assert_eq!(result.id, 1);
 	}

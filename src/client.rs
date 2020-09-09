@@ -14,14 +14,14 @@ impl Acnh {
   pub fn new() -> Self {
 	Acnh {
 	  client: Client::new(),
-	  prefix: String::from("http://acnhapi.com/v1/"),
+	  prefix: String::from("http://acnhapi.com/v1a/"),
 	}
   }
 
-  pub async fn fishes(&self) -> Result<HashMap<String, fish::Fish>, Box<dyn error::Error>> {
+  pub async fn fishes(&self) -> Result<Vec<fish::Fish>, Box<dyn error::Error>> {
 	let response = self.get("fish").await?;
 
-	match response.json::<HashMap<String, fish::Fish>>().await {
+	match response.json::<Vec<fish::Fish>>().await {
 	  Ok(result) => Ok(result),
 	  Err(e) => {
 		Err(Box::new(e))

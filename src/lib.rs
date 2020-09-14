@@ -5,3 +5,5 @@ pub mod fish;
 pub mod sea_creature;
 pub mod bug;
 pub mod fossil;
+pub mod villager;
+pub mod catch_translations;
